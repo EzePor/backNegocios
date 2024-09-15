@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./myapp   # Cambié esto para usar la ruta correcta de la carpeta publicada
+          path: ./myapp  # La carpeta de publicación del proyecto
 
   deploy:
     runs-on: windows-latest
@@ -40,20 +40,20 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: .net-app  # Descargamos el artefacto correcto
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_55732181A6E04907AAA9DED04D035385 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0CF5B8A2ADF24CEDB4B4E954F2ECE431 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2AB534A35BAF49CAA2C9F44D72AE75EA }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -61,4 +61,4 @@ jobs:
         with:
           app-name: 'sistemadenegocios'
           slot-name: 'Production'
-          package: ./myapp  # Asegúrate de que esta ruta sea consistente
+          package: './myapp'  # Ruta a la carpeta con los archivos de publicación
