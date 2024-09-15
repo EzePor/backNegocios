@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./myapp   # Cambié esto para usar la ruta correcta de la carpeta publicada
 
   deploy:
     runs-on: windows-latest
@@ -40,7 +40,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -61,5 +61,4 @@ jobs:
         with:
           app-name: 'sistemadenegocios'
           slot-name: 'Production'
-          package: .
-          
+          package: ./myapp  # Asegúrate de que esta ruta sea consistente
