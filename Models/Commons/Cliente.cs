@@ -6,6 +6,7 @@ namespace backNegocio.Models.Commons
     {
         public int id { get; set; }
         public string apellidoNombre { get; set; } = string.Empty;
+        public string cuitDni { get; set; } = string.Empty;
         public string direccion { get; set; } = string.Empty;
         public string telefono { get; set; } = string.Empty;
         public string email { get; set; }   = string.Empty ;

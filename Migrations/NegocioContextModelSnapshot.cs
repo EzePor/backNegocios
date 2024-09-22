@@ -46,6 +46,10 @@ namespace backNegocio.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("cuitDni")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("direccion")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -73,6 +77,7 @@ namespace backNegocio.Migrations
                             Localidad = "",
                             Provincia = "",
                             apellidoNombre = "Porchietto Ezequiel Gustavo",
+                            cuitDni = "",
                             direccion = " Juan Mantovani 1877",
                             eliminado = false,
                             email = "ezeporche@gmail.com",
@@ -85,6 +90,7 @@ namespace backNegocio.Migrations
                             Localidad = "",
                             Provincia = "",
                             apellidoNombre = "Perez Camila",
+                            cuitDni = "",
                             direccion = "Calle 31 324 ",
                             eliminado = false,
                             email = "camiperez@gamil.com",
