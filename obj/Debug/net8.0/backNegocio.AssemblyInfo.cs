@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("backNegocio")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d90c023231b38f84ad8253e3827a636959f6b5df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d1e93cf492a06ea40eba223d1ffa5e3a76982fa1")]
 [assembly: System.Reflection.AssemblyProductAttribute("backNegocio")]
 [assembly: System.Reflection.AssemblyTitleAttribute("backNegocio")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
