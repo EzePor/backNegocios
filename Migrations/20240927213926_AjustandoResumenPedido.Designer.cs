@@ -12,8 +12,8 @@ using backNegocio.DataContext;
 namespace backNegocio.Migrations
 {
     [DbContext(typeof(NegocioContext))]
-    [Migration("20240912223256_inicioproyecto")]
-    partial class inicioproyecto
+    [Migration("20240927213926_AjustandoResumenPedido")]
+    partial class AjustandoResumenPedido
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,10 @@ namespace backNegocio.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("cuitDni")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("direccion")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -72,10 +76,11 @@ namespace backNegocio.Migrations
                         new
                         {
                             id = 1,
-                            CodigoPostal = "",
-                            Localidad = "",
-                            Provincia = "",
+                            CodigoPostal = "3040",
+                            Localidad = "San Justo",
+                            Provincia = "Santa Fe",
                             apellidoNombre = "Porchietto Ezequiel Gustavo",
+                            cuitDni = "25730663",
                             direccion = " Juan Mantovani 1877",
                             eliminado = false,
                             email = "ezeporche@gmail.com",
@@ -84,10 +89,11 @@ namespace backNegocio.Migrations
                         new
                         {
                             id = 2,
-                            CodigoPostal = "",
-                            Localidad = "",
-                            Provincia = "",
+                            CodigoPostal = "3048",
+                            Localidad = "Videla",
+                            Provincia = "Santa Fe",
                             apellidoNombre = "Perez Camila",
+                            cuitDni = "33258369",
                             direccion = "Calle 31 324 ",
                             eliminado = false,
                             email = "camiperez@gamil.com",
@@ -129,7 +135,7 @@ namespace backNegocio.Migrations
                         new
                         {
                             id = 2,
-                            apellidoNombre = "Perez Maria",
+                            apellidoNombre = "Cantero Maria",
                             dni = "87654321",
                             eliminado = false
                         });
@@ -298,7 +304,7 @@ namespace backNegocio.Migrations
                             eliminado = false,
                             nombre = "Auricular inalámbrico F9",
                             precio = 13500m,
-                            stock = 0
+                            stock = 100
                         },
                         new
                         {
@@ -307,7 +313,7 @@ namespace backNegocio.Migrations
                             eliminado = false,
                             nombre = "Album 200F 13x18 New Album",
                             precio = 17900m,
-                            stock = 0
+                            stock = 100
                         },
                         new
                         {
@@ -316,7 +322,7 @@ namespace backNegocio.Migrations
                             eliminado = false,
                             nombre = "Reloj Digital Dakot 1845",
                             precio = 22300m,
-                            stock = 0
+                            stock = 100
                         });
                 });
 
@@ -365,6 +371,9 @@ namespace backNegocio.Migrations
                     b.Property<int>("PedidoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ResumenPedidoId")
+                        .HasColumnType("int");
+
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
@@ -380,10 +389,12 @@ namespace backNegocio.Migrations
 
                     b.HasIndex("PedidoId");
 
+                    b.HasIndex("ResumenPedidoId");
+
                     b.ToTable("DetalleImpresion");
                 });
 
-            modelBuilder.Entity("backNegocio.Models.Detalles.DetallePedido", b =>
+            modelBuilder.Entity("backNegocio.Models.Detalles.DetalleProducto", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -395,6 +406,9 @@ namespace backNegocio.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ResumenPedidoId")
                         .HasColumnType("int");
 
                     b.Property<int>("cantidad")
@@ -412,7 +426,9 @@ namespace backNegocio.Migrations
 
                     b.HasIndex("ProductoId");
 
-                    b.ToTable("DetallePedido");
+                    b.HasIndex("ResumenPedidoId");
+
+                    b.ToTable("DetalleProducto");
                 });
 
             modelBuilder.Entity("backNegocio.Models.Detalles.Pedido", b =>
@@ -450,6 +466,27 @@ namespace backNegocio.Migrations
                     b.ToTable("Pedido");
                 });
 
+            modelBuilder.Entity("backNegocio.Models.Detalles.ResumenPedido", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PedidoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
+                    b.ToTable("ResumenPedido");
+                });
+
             modelBuilder.Entity("backNegocio.Models.Detalles.DetalleImpresion", b =>
                 {
                     b.HasOne("backNegocio.Models.Commons.Impresion", "impresion")
@@ -464,15 +501,19 @@ namespace backNegocio.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backNegocio.Models.Detalles.ResumenPedido", null)
+                        .WithMany("DetallesImpresion")
+                        .HasForeignKey("ResumenPedidoId");
+
                     b.Navigation("impresion");
 
                     b.Navigation("pedido");
                 });
 
-            modelBuilder.Entity("backNegocio.Models.Detalles.DetallePedido", b =>
+            modelBuilder.Entity("backNegocio.Models.Detalles.DetalleProducto", b =>
                 {
                     b.HasOne("backNegocio.Models.Detalles.Pedido", "pedido")
-                        .WithMany("DetallesPedido")
+                        .WithMany("DetallesProducto")
                         .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -482,6 +523,10 @@ namespace backNegocio.Migrations
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("backNegocio.Models.Detalles.ResumenPedido", null)
+                        .WithMany("DetallesProducto")
+                        .HasForeignKey("ResumenPedidoId");
 
                     b.Navigation("pedido");
 
@@ -507,6 +552,17 @@ namespace backNegocio.Migrations
                     b.Navigation("modoPago");
                 });
 
+            modelBuilder.Entity("backNegocio.Models.Detalles.ResumenPedido", b =>
+                {
+                    b.HasOne("backNegocio.Models.Detalles.Pedido", "Pedido")
+                        .WithMany()
+                        .HasForeignKey("PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
+                });
+
             modelBuilder.Entity("backNegocio.Models.Commons.Cliente", b =>
                 {
                     b.Navigation("Pedidos");
@@ -516,7 +572,14 @@ namespace backNegocio.Migrations
                 {
                     b.Navigation("DetallesImpresion");
 
-                    b.Navigation("DetallesPedido");
+                    b.Navigation("DetallesProducto");
+                });
+
+            modelBuilder.Entity("backNegocio.Models.Detalles.ResumenPedido", b =>
+                {
+                    b.Navigation("DetallesImpresion");
+
+                    b.Navigation("DetallesProducto");
                 });
 #pragma warning restore 612, 618
         }

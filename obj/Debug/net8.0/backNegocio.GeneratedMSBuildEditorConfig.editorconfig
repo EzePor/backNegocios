@@ -25,3 +25,27 @@ build_property.SupportLocalizedComponentNames =
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio
 build_property._RazorSourceGeneratorDebug = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/DetalleProductos/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVByb2R1Y3Rvc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/DetalleProductos/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVByb2R1Y3Rvc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/DetalleProductos/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVByb2R1Y3Rvc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/DetalleProductos/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVByb2R1Y3Rvc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/DetalleProductos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVByb2R1Y3Rvc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/Software y BBDD/ProyectoFinal2024/backNegocio/backNegocio/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

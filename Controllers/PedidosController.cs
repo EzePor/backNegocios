@@ -24,7 +24,7 @@ namespace backNegocio.Controllers
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
             return await _context.Pedido
-                                 .Include(p => p.DetallesPedido)
+                                 .Include(p => p.DetallesProducto)
                                  .Include(p => p.DetallesImpresion)
                                  .ToListAsync();
         }
@@ -34,7 +34,7 @@ namespace backNegocio.Controllers
         public async Task<ActionResult<Pedido>> GetPedido(int id)
         {
             var pedido = await _context.Pedido
-                                       .Include(p => p.DetallesPedido)
+                                       .Include(p => p.DetallesProducto)
                                        .Include(p => p.DetallesImpresion)
                                        .FirstOrDefaultAsync(p => p.id == id);
 
@@ -91,7 +91,7 @@ namespace backNegocio.Controllers
         public async Task<IActionResult> DeletePedido(int id)
         {
             var pedido = await _context.Pedido
-                                       .Include(p => p.DetallesPedido)
+                                       .Include(p => p.DetallesProducto)
                                        .Include(p => p.DetallesImpresion)
                                        .FirstOrDefaultAsync(p => p.id == id);
 

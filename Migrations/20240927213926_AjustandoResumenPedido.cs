@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backNegocio.Migrations
 {
     /// <inheritdoc />
-    public partial class inicioproyecto : Migration
+    public partial class AjustandoResumenPedido : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,8 @@ namespace backNegocio.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     apellidoNombre = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    cuitDni = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     direccion = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -172,6 +174,27 @@ namespace backNegocio.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ResumenPedido",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PedidoId = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResumenPedido", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ResumenPedido_Pedido_PedidoId",
+                        column: x => x.PedidoId,
+                        principalTable: "Pedido",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "DetalleImpresion",
                 columns: table => new
                 {
@@ -181,7 +204,8 @@ namespace backNegocio.Migrations
                     ImpresionId = table.Column<int>(type: "int", nullable: false),
                     cantidad = table.Column<int>(type: "int", nullable: false),
                     precioUnitario = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    eliminado = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    eliminado = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ResumenPedidoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -198,11 +222,16 @@ namespace backNegocio.Migrations
                         principalTable: "Pedido",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DetalleImpresion_ResumenPedido_ResumenPedidoId",
+                        column: x => x.ResumenPedidoId,
+                        principalTable: "ResumenPedido",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "DetallePedido",
+                name: "DetalleProducto",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -211,33 +240,39 @@ namespace backNegocio.Migrations
                     ProductoId = table.Column<int>(type: "int", nullable: false),
                     cantidad = table.Column<int>(type: "int", nullable: false),
                     precioUnitario = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    eliminado = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    eliminado = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ResumenPedidoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DetallePedido", x => x.id);
+                    table.PrimaryKey("PK_DetalleProducto", x => x.id);
                     table.ForeignKey(
-                        name: "FK_DetallePedido_Pedido_PedidoId",
+                        name: "FK_DetalleProducto_Pedido_PedidoId",
                         column: x => x.PedidoId,
                         principalTable: "Pedido",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DetallePedido_Producto_ProductoId",
+                        name: "FK_DetalleProducto_Producto_ProductoId",
                         column: x => x.ProductoId,
                         principalTable: "Producto",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DetalleProducto_ResumenPedido_ResumenPedidoId",
+                        column: x => x.ResumenPedidoId,
+                        principalTable: "ResumenPedido",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
                 table: "Cliente",
-                columns: new[] { "id", "CodigoPostal", "Localidad", "Provincia", "apellidoNombre", "direccion", "eliminado", "email", "telefono" },
+                columns: new[] { "id", "CodigoPostal", "Localidad", "Provincia", "apellidoNombre", "cuitDni", "direccion", "eliminado", "email", "telefono" },
                 values: new object[,]
                 {
-                    { 1, "", "", "", "Porchietto Ezequiel Gustavo", " Juan Mantovani 1877", false, "ezeporche@gmail.com", "3498 431264" },
-                    { 2, "", "", "", "Perez Camila", "Calle 31 324 ", false, "camiperez@gamil.com", "3498 452385" }
+                    { 1, "3040", "San Justo", "Santa Fe", "Porchietto Ezequiel Gustavo", "25730663", " Juan Mantovani 1877", false, "ezeporche@gmail.com", "3498 431264" },
+                    { 2, "3048", "Videla", "Santa Fe", "Perez Camila", "33258369", "Calle 31 324 ", false, "camiperez@gamil.com", "3498 452385" }
                 });
 
             migrationBuilder.InsertData(
@@ -246,7 +281,7 @@ namespace backNegocio.Migrations
                 values: new object[,]
                 {
                     { 1, "Gomez Juan", "12345678", false },
-                    { 2, "Perez Maria", "87654321", false }
+                    { 2, "Cantero Maria", "87654321", false }
                 });
 
             migrationBuilder.InsertData(
@@ -276,9 +311,9 @@ namespace backNegocio.Migrations
                 columns: new[] { "id", "Rubro", "eliminado", "nombre", "precio", "stock" },
                 values: new object[,]
                 {
-                    { 1, 4, false, "Auricular inalámbrico F9", 13500m, 0 },
-                    { 2, 0, false, "Album 200F 13x18 New Album", 17900m, 0 },
-                    { 3, 3, false, "Reloj Digital Dakot 1845", 22300m, 0 }
+                    { 1, 4, false, "Auricular inalámbrico F9", 13500m, 100 },
+                    { 2, 0, false, "Album 200F 13x18 New Album", 17900m, 100 },
+                    { 3, 3, false, "Reloj Digital Dakot 1845", 22300m, 100 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -292,14 +327,24 @@ namespace backNegocio.Migrations
                 column: "PedidoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DetallePedido_PedidoId",
-                table: "DetallePedido",
+                name: "IX_DetalleImpresion_ResumenPedidoId",
+                table: "DetalleImpresion",
+                column: "ResumenPedidoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DetalleProducto_PedidoId",
+                table: "DetalleProducto",
                 column: "PedidoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DetallePedido_ProductoId",
-                table: "DetallePedido",
+                name: "IX_DetalleProducto_ProductoId",
+                table: "DetalleProducto",
                 column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DetalleProducto_ResumenPedidoId",
+                table: "DetalleProducto",
+                column: "ResumenPedidoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pedido_ClienteId",
@@ -310,6 +355,11 @@ namespace backNegocio.Migrations
                 name: "IX_Pedido_ModoPagoId",
                 table: "Pedido",
                 column: "ModoPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResumenPedido_PedidoId",
+                table: "ResumenPedido",
+                column: "PedidoId");
         }
 
         /// <inheritdoc />
@@ -319,7 +369,7 @@ namespace backNegocio.Migrations
                 name: "DetalleImpresion");
 
             migrationBuilder.DropTable(
-                name: "DetallePedido");
+                name: "DetalleProducto");
 
             migrationBuilder.DropTable(
                 name: "Empleado");
@@ -331,10 +381,13 @@ namespace backNegocio.Migrations
                 name: "Impresion");
 
             migrationBuilder.DropTable(
-                name: "Pedido");
+                name: "Producto");
 
             migrationBuilder.DropTable(
-                name: "Producto");
+                name: "ResumenPedido");
+
+            migrationBuilder.DropTable(
+                name: "Pedido");
 
             migrationBuilder.DropTable(
                 name: "Cliente");

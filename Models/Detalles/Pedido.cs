@@ -19,7 +19,7 @@ namespace backNegocio.Models.Detalles
         public bool eliminado { get; set; } = false;
 
         // Relación: Un pedido puede tener múltiples productos y/o impresiones
-        public ICollection<DetallePedido>? DetallesPedido { get; set; }
+        public ICollection<DetalleProducto>? DetallesProducto { get; set; }
         public ICollection<DetalleImpresion>? DetallesImpresion { get; set; }
 
 
@@ -28,10 +28,10 @@ namespace backNegocio.Models.Detalles
         {
             get
             {
-                decimal totalDetallePedido = DetallesPedido?.Sum(dp => dp.total ?? 0) ?? 0;
+                decimal totalDetalleProducto = DetallesProducto?.Sum(dp => dp.total ?? 0) ?? 0;
                 decimal totalDetalleImpresion = DetallesImpresion?.Sum(di => di.total ?? 0) ?? 0;
 
-                return totalDetallePedido + totalDetalleImpresion;
+                return totalDetalleProducto + totalDetalleImpresion;
             }
         }
 

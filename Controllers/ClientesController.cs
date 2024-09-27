@@ -35,7 +35,7 @@ namespace backNegocio.Controllers
         {
             var cliente = await _context.Cliente
                                         .Include(c => c.Pedidos)
-                                        .ThenInclude(p => p.DetallesPedido)
+                                        .ThenInclude(p => p.DetallesProducto)
                                         .Include(c => c.Pedidos)
                                         .ThenInclude(p => p.DetallesImpresion)
                                         .FirstOrDefaultAsync(c => c.id == id);
@@ -54,7 +54,7 @@ namespace backNegocio.Controllers
         {
             var cliente = await _context.Cliente
                                         .Include(c => c.Pedidos)
-                                        .ThenInclude(p => p.DetallesPedido)
+                                        .ThenInclude(p => p.DetallesProducto)
                                         .Include(c => c.Pedidos)
                                         .ThenInclude(p => p.DetallesImpresion)
                                         .FirstOrDefaultAsync(c => c.id == id);

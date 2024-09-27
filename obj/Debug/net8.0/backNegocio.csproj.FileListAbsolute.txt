@@ -234,6 +234,8 @@ E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\ba
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.csproj.CoreCompileInputs.cache
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.MvcApplicationPartsAssemblyInfo.cs
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.MvcApplicationPartsAssemblyInfo.cache
+E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.RazorAssemblyInfo.cache
+E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.RazorAssemblyInfo.cs
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\backNegocio.sourcelink.json
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\staticwebassets.build.json
 E:\Software y BBDD\ProyectoFinal2024\backNegocio\backNegocio\obj\Debug\net8.0\staticwebassets.development.json

@@ -22,8 +22,8 @@ namespace backNegocio.DataContext
             optionsBuilder.UseMySql(cadenaConexion,
                                     ServerVersion.AutoDetect(cadenaConexion));
         }
-       
-       
+
+
 
 
 
@@ -31,9 +31,9 @@ namespace backNegocio.DataContext
         {
             // Clientes
             #region Datos semilla de clientes
-            var cliente1 = new Cliente { id = 1, apellidoNombre = "Porchietto Ezequiel Gustavo",cuitDni = "25730663", direccion = " Juan Mantovani 1877", telefono = "3498 431264", email = "ezeporche@gmail.com", Localidad = "San Justo", CodigoPostal = "3040", Provincia = "Santa Fe" };
+            var cliente1 = new Cliente { id = 1, apellidoNombre = "Porchietto Ezequiel Gustavo", cuitDni = "25730663", direccion = " Juan Mantovani 1877", telefono = "3498 431264", email = "ezeporche@gmail.com", Localidad = "San Justo", CodigoPostal = "3040", Provincia = "Santa Fe" };
 
-            var cliente2 = new Cliente { id = 2, apellidoNombre = "Perez Camila",cuitDni = "33258369", direccion = "Calle 31 324 ", telefono = "3498 452385", email = "camiperez@gamil.com", Localidad = "Videla", CodigoPostal = "3048", Provincia = "Santa Fe" };
+            var cliente2 = new Cliente { id = 2, apellidoNombre = "Perez Camila", cuitDni = "33258369", direccion = "Calle 31 324 ", telefono = "3498 452385", email = "camiperez@gamil.com", Localidad = "Videla", CodigoPostal = "3048", Provincia = "Santa Fe" };
 
             modelBuilder.Entity<Cliente>().HasData(cliente1);
             modelBuilder.Entity<Cliente>().HasData(cliente2);
@@ -61,11 +61,11 @@ namespace backNegocio.DataContext
 
             // Productos
             #region Datos semilla de productos
-            var producto1 = new Producto { id = 1, nombre = "Auricular inalámbrico F9", Rubro = RubroEnum.Auriculares , precio = 13500m, stock = 100 };
+            var producto1 = new Producto { id = 1, nombre = "Auricular inalámbrico F9", Rubro = RubroEnum.Auriculares, precio = 13500m, stock = 100 };
             var producto2 = new Producto { id = 2, nombre = "Album 200F 13x18 New Album", Rubro = RubroEnum.Fotografia, precio = 17900m, stock = 100 };
             var producto3 = new Producto { id = 3, nombre = "Reloj Digital Dakot 1845", Rubro = RubroEnum.Relojes, precio = 22300m, stock = 100 };
 
-            modelBuilder.Entity<Producto>().HasData(producto1); 
+            modelBuilder.Entity<Producto>().HasData(producto1);
             modelBuilder.Entity<Producto>().HasData(producto2);
             modelBuilder.Entity<Producto>().HasData(producto3);
 
@@ -103,14 +103,14 @@ namespace backNegocio.DataContext
         public DbSet<Empleado> Empleado { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Producto> Producto { get; set; }
-        public DbSet<Impresion> Impresion { get; set; } 
+        public DbSet<Impresion> Impresion { get; set; }
         public DbSet<ModoPago> ModoPago { get; set; }
-        public DbSet<DetalleImpresion> DetalleImpresion { get; set; } 
-        public DbSet<DetallePedido> DetallePedido { get; set; } 
-        public DbSet<Pedido> Pedido { get; set; } 
+        public DbSet<DetalleImpresion> DetalleImpresion { get; set; }
+        public DbSet<DetalleProducto> DetalleProducto { get; set; }
+        public DbSet<Pedido> Pedido { get; set; }
+        public DbSet<ResumenPedido> ResumenPedido { get; set; }
+       
 
 
     }
-
-   
 }

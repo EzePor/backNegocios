@@ -2,7 +2,7 @@
 
 namespace backNegocio.Models.Detalles
 {
-    public class DetallePedido
+    public class DetalleProducto
     {
         public int id { get; set; }
         public int PedidoId { get; set; }
