@@ -46,6 +46,24 @@ namespace backNegocio.Controllers
             return pedido;
         }
 
+        [HttpGet("cliente/{clienteId}")]
+        public async Task<IActionResult> GetPedidosByClienteId(int clienteId)
+        {
+            var pedidos = await _context.Pedido
+                .Include(p => p.DetallesProducto)
+                .Include(p => p.DetallesImpresion)
+                .Where(p => p.ClienteId == clienteId)
+                .ToListAsync();
+
+            if (pedidos == null || !pedidos.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(pedidos);
+        }
+
+
         // PUT: api/Pedidos/5 - Actualizar Pedido
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, Pedido pedidoActualizado)

@@ -45,6 +45,25 @@ namespace backNegocio.Controllers
             return resumenPedido;
         }
 
+        // GET: api/ResumenPedidos/cliente/5
+        [HttpGet("cliente/{clienteId}")]
+        public async Task<ActionResult<IEnumerable<ResumenPedido>>> GetResumenesPorCliente(int clienteId)
+        {
+            var resumenes = await _context.ResumenPedido
+                .Include(rp => rp.DetallesProducto)
+                .Include(rp => rp.DetallesImpresion)
+                .Include(rp => rp.Pedido) // Incluye el pedido para obtener información del cliente
+                .Where(rp => rp.Pedido.ClienteId == clienteId)
+                .ToListAsync();
+
+            if (resumenes == null || !resumenes.Any())
+            {
+                return NotFound();
+            }
+
+            return resumenes;
+        }
+
         // PUT: api/ResumenPedidos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
