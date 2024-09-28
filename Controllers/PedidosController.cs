@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backNegocio.DataContext;
 using backNegocio.Models.Detalles;
+using Microsoft.AspNetCore.Cors;
 
 namespace backNegocio.Controllers
 {
@@ -96,6 +97,7 @@ namespace backNegocio.Controllers
 
         // POST: api/Pedidos - Crear Pedido con Detalles
         [HttpPost]
+        [EnableCors("AllowAll")]
         public async Task<ActionResult<Pedido>> PostPedido(Pedido nuevoPedido)
         {
             _context.Pedido.Add(nuevoPedido);
