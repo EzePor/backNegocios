@@ -24,13 +24,15 @@ namespace backNegocio.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
+            // Filtra los pedidos que no están eliminados
             return await _context.Pedido
-                                  .Include(c=> c.cliente)
-                                 .Include(p => p.DetallesProducto)
-                                 .ThenInclude(dp => dp.producto)
-                                 .Include(p => p.DetallesImpresion)
-                                 .ThenInclude(di => di.impresion)
-                                 .ToListAsync();
+                                  .Where(p => !p.eliminado) // Filtrar los que no están eliminados
+                                  .Include(c => c.cliente)
+                                  .Include(p => p.DetallesProducto)
+                                  .ThenInclude(dp => dp.producto)
+                                  .Include(p => p.DetallesImpresion)
+                                  .ThenInclude(di => di.impresion)
+                                  .ToListAsync();
         }
 
         // GET: api/Pedidos/5
@@ -43,7 +45,7 @@ namespace backNegocio.Controllers
                                        .ThenInclude(dp => dp.producto)
                                        .Include(p => p.DetallesImpresion)
                                        .ThenInclude(di => di.impresion)
-                                       .FirstOrDefaultAsync(p => p.id == id);
+                                       .FirstOrDefaultAsync(p => p.id == id && !p.eliminado); // Filtrar los que no están eliminados
 
             if (pedido == null)
             {
@@ -62,7 +64,7 @@ namespace backNegocio.Controllers
                 .ThenInclude(dp => dp.producto)
                 .Include(p => p.DetallesImpresion)
                 .ThenInclude(di => di.impresion)
-                .Where(p => p.ClienteId == clienteId)
+                .Where(p => p.ClienteId == clienteId && !p.eliminado) // Filtrar los que no están eliminados
                 .ToListAsync();
 
             if (pedidos == null || !pedidos.Any())
@@ -82,15 +84,10 @@ namespace backNegocio.Controllers
                 return BadRequest("El ID del pedido no coincide.");
             }
 
-            // Validación para no permitir actualizar pedidos eliminados
             var pedidoExistente = await _context.Pedido.FindAsync(id);
-            if (pedidoExistente == null)
+            if (pedidoExistente == null || pedidoExistente.eliminado)
             {
-                return NotFound("Pedido no encontrado.");
-            }
-            if (pedidoExistente.eliminado)
-            {
-                return BadRequest("No se puede actualizar un pedido eliminado.");
+                return NotFound("Pedido no encontrado o está eliminado.");
             }
 
             _context.Entry(pedidoActualizado).State = EntityState.Modified;
@@ -119,45 +116,20 @@ namespace backNegocio.Controllers
         [EnableCors("AllowAll")]
         public async Task<ActionResult<Pedido>> PostPedido(Pedido nuevoPedido)
         {
-            // Validaciones antes de guardar
-            if (nuevoPedido == null)
+            if (nuevoPedido == null || nuevoPedido.ClienteId <= 0 ||
+                nuevoPedido.DetallesProducto == null || !nuevoPedido.DetallesProducto.Any() ||
+                nuevoPedido.DetallesImpresion == null || !nuevoPedido.DetallesImpresion.Any())
             {
-                return BadRequest("El pedido no puede estar vacío.");
-            }
-            if (nuevoPedido.ClienteId <= 0)
-            {
-                return BadRequest("El pedido debe tener un cliente válido.");
-            }
-            if (nuevoPedido.DetallesProducto == null || !nuevoPedido.DetallesProducto.Any())
-            {
-                return BadRequest("El pedido debe contener al menos un producto.");
+                return BadRequest("El pedido debe contener información válida.");
             }
 
-            if (nuevoPedido.DetallesImpresion == null || !nuevoPedido.DetallesImpresion.Any())
-            {
-                return BadRequest("El pedido debe contener al menos una impresión.");
-            }
+            _context.Pedido.Add(nuevoPedido);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                // Agregar el nuevo pedido
-                _context.Pedido.Add(nuevoPedido);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetPedido), new { id = nuevoPedido.id }, nuevoPedido);
-            }
-            catch (DbUpdateException ex)
-            {
-                // Aquí podrías loguear el error si es necesario
-                return StatusCode(500, $"Error al guardar el pedido: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error inesperado: {ex.Message}");
-            }
+            return CreatedAtAction(nameof(GetPedido), new { id = nuevoPedido.id }, nuevoPedido);
         }
 
-        // DELETE: api/Pedidos/5 - Eliminar Pedido y Detalles Asociados
+        // DELETE: api/Pedidos/5 - Eliminar Pedido y Detalles Asociados (Soft Delete)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedido(int id)
         {
@@ -171,8 +143,9 @@ namespace backNegocio.Controllers
                 return NotFound("Pedido no encontrado.");
             }
 
-            // Marcar como eliminado en lugar de borrarlo físicamente (si aplica en tu negocio)
+            // Marcar como eliminado en lugar de borrarlo físicamente
             pedido.eliminado = true;
+            _context.Pedido.Update(pedido);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -180,7 +153,7 @@ namespace backNegocio.Controllers
 
         private bool PedidoExists(int id)
         {
-            return _context.Pedido.Any(e => e.id == id);
+            return _context.Pedido.Any(e => e.id == id && !e.eliminado); // Verificar si existe y no está eliminado
         }
     }
 }

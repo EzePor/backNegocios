@@ -20,20 +20,22 @@ namespace backNegocio.Controllers
             _context = context;
         }
 
-        // GET: api/Clientes
+        // GET: api/Clientes - Obtener todos los clientes no eliminados
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
         {
             return await _context.Cliente
+                                 .Where(c => !c.eliminado)  // Solo clientes no eliminados
                                  .Include(c => c.Pedidos)
                                  .ToListAsync();
         }
 
-        // GET: api/Cliente individual
+        // GET: api/Cliente individual no eliminado
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetCliente(int id)
         {
             var cliente = await _context.Cliente
+                                        .Where(c => !c.eliminado)  // Solo cliente no eliminado
                                         .Include(c => c.Pedidos)
                                         .ThenInclude(p => p.DetallesProducto)
                                         .Include(c => c.Pedidos)
@@ -42,17 +44,18 @@ namespace backNegocio.Controllers
 
             if (cliente == null)
             {
-                return NotFound();
+                return NotFound("Cliente no encontrado.");
             }
 
             return cliente;
         }
 
-        // GET: api/Clientes/5/pedidos - Obtener todos los pedidos de un cliente
+        // GET: api/Clientes/5/pedidos - Obtener pedidos de un cliente no eliminado
         [HttpGet("{id}/pedidos")]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidosCliente(int id)
         {
             var cliente = await _context.Cliente
+                                        .Where(c => !c.eliminado)  // Solo cliente no eliminado
                                         .Include(c => c.Pedidos)
                                         .ThenInclude(p => p.DetallesProducto)
                                         .Include(c => c.Pedidos)
@@ -61,19 +64,31 @@ namespace backNegocio.Controllers
 
             if (cliente == null)
             {
-                return NotFound();
+                return NotFound("Cliente no encontrado.");
             }
 
             return cliente.Pedidos.ToList();
         }
 
-        // PUT: api/Clientes/5 - Actualizar Cliente
+        // PUT: api/Clientes/5 - Actualizar cliente no eliminado
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCliente(int id, Cliente cliente)
         {
             if (id != cliente.id)
             {
-                return BadRequest();
+                return BadRequest("El ID del cliente no coincide.");
+            }
+
+            var clienteExistente = await _context.Cliente.FindAsync(id);
+
+            if (clienteExistente == null)
+            {
+                return NotFound("Cliente no encontrado.");
+            }
+
+            if (clienteExistente.eliminado)
+            {
+                return BadRequest("No se puede actualizar un cliente eliminado.");
             }
 
             _context.Entry(cliente).State = EntityState.Modified;
@@ -86,7 +101,7 @@ namespace backNegocio.Controllers
             {
                 if (!ClienteExists(id))
                 {
-                    return NotFound();
+                    return NotFound("El cliente ya no existe.");
                 }
                 else
                 {
@@ -97,7 +112,7 @@ namespace backNegocio.Controllers
             return NoContent();
         }
 
-        // POST: api/Clientes - Crear Cliente
+        // POST: api/Clientes - Crear cliente
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
@@ -107,7 +122,7 @@ namespace backNegocio.Controllers
             return CreatedAtAction(nameof(GetCliente), new { id = cliente.id }, cliente);
         }
 
-        // DELETE: api/Clientes/5 - Eliminar Cliente
+        // DELETE: api/Clientes/5 - Marcar cliente como eliminado
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCliente(int id)
         {
@@ -116,11 +131,12 @@ namespace backNegocio.Controllers
                                         .FirstOrDefaultAsync(c => c.id == id);
             if (cliente == null)
             {
-                return NotFound();
+                return NotFound("Cliente no encontrado.");
             }
 
-            // Eliminamos el cliente y los pedidos asociados
-            _context.Cliente.Remove(cliente);
+            // Marcar como eliminado en lugar de eliminar físicamente
+            cliente.eliminado = true;
+            _context.Cliente.Update(cliente);
             await _context.SaveChangesAsync();
 
             return NoContent();

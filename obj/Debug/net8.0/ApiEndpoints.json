@@ -244,16 +244,16 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "backNegocio.Controllers.DetallePedidosController",
-    "Method": "GetDetallePedido",
-    "RelativePath": "api/DetallePedidos",
+    "ContainingType": "backNegocio.Controllers.DetalleProductosController",
+    "Method": "GetDetalleProducto",
+    "RelativePath": "api/DetalleProductos",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[backNegocio.Models.Detalles.DetallePedido, backNegocio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[backNegocio.Models.Detalles.DetalleProducto, backNegocio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -264,22 +264,22 @@
     ]
   },
   {
-    "ContainingType": "backNegocio.Controllers.DetallePedidosController",
-    "Method": "PostDetallePedido",
-    "RelativePath": "api/DetallePedidos",
+    "ContainingType": "backNegocio.Controllers.DetalleProductosController",
+    "Method": "PostDetalleProducto",
+    "RelativePath": "api/DetalleProductos",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "detallePedido",
-        "Type": "backNegocio.Models.Detalles.DetallePedido",
+        "Name": "detalleProducto",
+        "Type": "backNegocio.Models.Detalles.DetalleProducto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "backNegocio.Models.Detalles.DetallePedido",
+        "Type": "backNegocio.Models.Detalles.DetalleProducto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -290,9 +290,9 @@
     ]
   },
   {
-    "ContainingType": "backNegocio.Controllers.DetallePedidosController",
-    "Method": "GetDetallePedido",
-    "RelativePath": "api/DetallePedidos/{id}",
+    "ContainingType": "backNegocio.Controllers.DetalleProductosController",
+    "Method": "GetDetalleProducto",
+    "RelativePath": "api/DetalleProductos/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -305,7 +305,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "backNegocio.Models.Detalles.DetallePedido",
+        "Type": "backNegocio.Models.Detalles.DetalleProducto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -316,9 +316,9 @@
     ]
   },
   {
-    "ContainingType": "backNegocio.Controllers.DetallePedidosController",
-    "Method": "PutDetallePedido",
-    "RelativePath": "api/DetallePedidos/{id}",
+    "ContainingType": "backNegocio.Controllers.DetalleProductosController",
+    "Method": "PutDetalleProducto",
+    "RelativePath": "api/DetalleProductos/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -329,17 +329,17 @@
         "IsRequired": true
       },
       {
-        "Name": "detallePedido",
-        "Type": "backNegocio.Models.Detalles.DetallePedido",
+        "Name": "detalleProducto",
+        "Type": "backNegocio.Models.Detalles.DetalleProducto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "backNegocio.Controllers.DetallePedidosController",
-    "Method": "DeleteDetallePedido",
-    "RelativePath": "api/DetallePedidos/{id}",
+    "ContainingType": "backNegocio.Controllers.DetalleProductosController",
+    "Method": "DeleteDetalleProducto",
+    "RelativePath": "api/DetalleProductos/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -789,6 +789,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backNegocio.Controllers.PedidosController",
+    "Method": "GetPedidosByClienteId",
+    "RelativePath": "api/Pedidos/cliente/{clienteId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clienteId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backNegocio.Controllers.ProductosController",
     "Method": "GetProducto",
     "RelativePath": "api/Productos",
@@ -896,6 +912,141 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "GetResumenPedido",
+    "RelativePath": "api/ResumenPedidos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[backNegocio.Models.Detalles.ResumenPedido, backNegocio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "PostResumenPedido",
+    "RelativePath": "api/ResumenPedidos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "resumenPedido",
+        "Type": "backNegocio.Models.Detalles.ResumenPedido",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backNegocio.Models.Detalles.ResumenPedido",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "GetResumenPedido",
+    "RelativePath": "api/ResumenPedidos/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backNegocio.Models.Detalles.ResumenPedido",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "PutResumenPedido",
+    "RelativePath": "api/ResumenPedidos/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "resumenPedido",
+        "Type": "backNegocio.Models.Detalles.ResumenPedido",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "DeleteResumenPedido",
+    "RelativePath": "api/ResumenPedidos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
+    "Method": "GetResumenesPorCliente",
+    "RelativePath": "api/ResumenPedidos/cliente/{clienteId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "clienteId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[backNegocio.Models.Detalles.ResumenPedido, backNegocio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "backNegocio.Controllers.UsuariosController",
