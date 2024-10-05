@@ -76,6 +76,7 @@ namespace backNegocio.Controllers
         }
 
         // PUT: api/Pedidos/5 - Actualizar Pedido
+        // PUT: api/Pedidos/5 - Actualizar Pedido
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, Pedido pedidoActualizado)
         {
@@ -100,6 +101,18 @@ namespace backNegocio.Controllers
             pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
             pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
 
+            // *** Manejo de productos eliminados ***
+            // Filtrar los productos que no están en el pedido actualizado
+            var productosEliminados = pedidoExistente.DetallesProducto
+                .Where(dp => !pedidoActualizado.DetallesProducto.Any(dpa => dpa.ProductoId == dp.ProductoId))
+                .ToList();
+
+            // Eliminar los productos eliminados
+            foreach (var productoEliminado in productosEliminados)
+            {
+                _context.DetalleProducto.Remove(productoEliminado);
+            }
+
             // Manejo de DetallesProducto
             foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
             {
@@ -108,18 +121,32 @@ namespace backNegocio.Controllers
 
                 if (detalleProductoExistente != null)
                 {
-                    // Si el producto ya existe, eliminarlo si se desea reemplazar
-                    _context.DetalleProducto.Remove(detalleProductoExistente);
+                    // Si el producto ya existe, actualiza su cantidad y precio
+                    detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
+                    detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
                 }
-
-                // Agregar el nuevo detalle del producto
-                pedidoExistente.DetallesProducto.Add(new DetalleProducto
+                else
                 {
-                    ProductoId = detalleProductoActualizado.ProductoId,
-                    cantidad = detalleProductoActualizado.cantidad,
-                    precioUnitario = detalleProductoActualizado.precioUnitario,
-                    
-                });
+                    // Si no existe, agregarlo como nuevo
+                    pedidoExistente.DetallesProducto.Add(new DetalleProducto
+                    {
+                        ProductoId = detalleProductoActualizado.ProductoId,
+                        cantidad = detalleProductoActualizado.cantidad,
+                        precioUnitario = detalleProductoActualizado.precioUnitario
+                    });
+                }
+            }
+
+            // *** Manejo de impresiones eliminadas ***
+            // Filtrar las impresiones que no están en el pedido actualizado
+            var impresionesEliminadas = pedidoExistente.DetallesImpresion
+                .Where(di => !pedidoActualizado.DetallesImpresion.Any(dia => dia.ImpresionId == di.ImpresionId))
+                .ToList();
+
+            // Eliminar las impresiones eliminadas
+            foreach (var impresionEliminada in impresionesEliminadas)
+            {
+                _context.DetalleImpresion.Remove(impresionEliminada);
             }
 
             // Manejo de DetallesImpresion
@@ -130,18 +157,20 @@ namespace backNegocio.Controllers
 
                 if (detalleImpresionExistente != null)
                 {
-                    // Si la impresión ya existe, eliminarla si se desea reemplazar
-                    _context.DetalleImpresion.Remove(detalleImpresionExistente);
+                    // Si la impresión ya existe, actualizar su cantidad y precio
+                    detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
+                    detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
                 }
-
-                // Agregar el nuevo detalle de impresión
-                pedidoExistente.DetallesImpresion.Add(new DetalleImpresion
+                else
                 {
-                    ImpresionId = detalleImpresionActualizado.ImpresionId,
-                    cantidad = detalleImpresionActualizado.cantidad,
-                    precioUnitario = detalleImpresionActualizado.precioUnitario,
-                    
-                });
+                    // Si no existe, agregarlo como nuevo
+                    pedidoExistente.DetallesImpresion.Add(new DetalleImpresion
+                    {
+                        ImpresionId = detalleImpresionActualizado.ImpresionId,
+                        cantidad = detalleImpresionActualizado.cantidad,
+                        precioUnitario = detalleImpresionActualizado.precioUnitario
+                    });
+                }
             }
 
             try
@@ -163,6 +192,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
 
 
