@@ -55,6 +55,19 @@ namespace backNegocio.Controllers
             return pedido;
         }
 
+        [HttpGet("estado/{estado}")]
+        public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidosPorEstado(string estado)
+        {
+            var pedidos = await _context.Pedido
+                .Include(p => p.cliente)
+                .Include(p => p.modoPago)
+                .Where(p => p.estadoPedido.ToString() == estado && !p.eliminado)
+                .ToListAsync();
+
+            return Ok(pedidos);
+        }
+
+
         [HttpGet("cliente/{clienteId}")]
         public async Task<IActionResult> GetPedidosByClienteId(int clienteId)
         {
