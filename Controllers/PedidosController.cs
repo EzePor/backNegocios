@@ -84,7 +84,7 @@ namespace backNegocio.Controllers
                 return BadRequest("El ID del pedido no coincide.");
             }
 
-            // Obtener el pedido existente junto con sus detalles de productos e impresiones
+            // Obtener el pedido existente junto con sus detalles
             var pedidoExistente = await _context.Pedido
                 .Include(p => p.DetallesProducto)
                 .Include(p => p.DetallesImpresion)
@@ -95,83 +95,58 @@ namespace backNegocio.Controllers
                 return NotFound("Pedido no encontrado o está eliminado.");
             }
 
-            // Actualizar solo las propiedades necesarias
+            // Actualizar propiedades básicas del pedido
             pedidoExistente.ModoPagoId = pedidoActualizado.ModoPagoId;
             pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
             pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
 
-            // Actualizar los detalles del producto
-            // Eliminar productos que ya no están en el pedido actualizado
-            var productosExistentesIds = pedidoExistente.DetallesProducto.Select(dp => dp.id).ToList();
-            var productosActualizadosIds = pedidoActualizado.DetallesProducto.Select(dp => dp.id).ToList();
-
-            // Eliminar los detalles que ya no están en la lista actualizada
-            var productosParaEliminar = pedidoExistente.DetallesProducto
-                .Where(dp => !productosActualizadosIds.Contains(dp.id))
-                .ToList();
-
-            foreach (var detalleProductoEliminar in productosParaEliminar)
-            {
-                _context.DetalleProducto.Remove(detalleProductoEliminar);
-            }
-
-            // Actualizar los detalles existentes o agregar nuevos
+            // Manejo de DetallesProducto
             foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
             {
                 var detalleProductoExistente = pedidoExistente.DetallesProducto
-                    .FirstOrDefault(dp => dp.id == detalleProductoActualizado.id);
+                    .FirstOrDefault(dp => dp.ProductoId == detalleProductoActualizado.ProductoId);
 
                 if (detalleProductoExistente != null)
                 {
-                    // Actualizar producto existente
-                    detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
-                    detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
-                    
+                    // Si el producto ya existe, eliminarlo si se desea reemplazar
+                    _context.DetalleProducto.Remove(detalleProductoExistente);
                 }
-                else
+
+                // Agregar el nuevo detalle del producto
+                pedidoExistente.DetallesProducto.Add(new DetalleProducto
                 {
-                    // Agregar nuevo producto al pedido
-                    pedidoExistente.DetallesProducto.Add(detalleProductoActualizado);
-                }
+                    ProductoId = detalleProductoActualizado.ProductoId,
+                    cantidad = detalleProductoActualizado.cantidad,
+                    precioUnitario = detalleProductoActualizado.precioUnitario,
+                    
+                });
             }
 
-            // Actualizar los detalles de impresión
-            // Eliminar impresiones que ya no están en el pedido actualizado
-            var impresionesExistentesIds = pedidoExistente.DetallesImpresion.Select(di => di.id).ToList();
-            var impresionesActualizadasIds = pedidoActualizado.DetallesImpresion.Select(di => di.id).ToList();
-
-            // Eliminar los detalles que ya no están en la lista actualizada
-            var impresionesParaEliminar = pedidoExistente.DetallesImpresion
-                .Where(di => !impresionesActualizadasIds.Contains(di.id))
-                .ToList();
-
-            foreach (var detalleImpresionEliminar in impresionesParaEliminar)
-            {
-                _context.DetalleImpresion.Remove(detalleImpresionEliminar);
-            }
-
-            // Actualizar los detalles existentes o agregar nuevos
+            // Manejo de DetallesImpresion
             foreach (var detalleImpresionActualizado in pedidoActualizado.DetallesImpresion)
             {
                 var detalleImpresionExistente = pedidoExistente.DetallesImpresion
-                    .FirstOrDefault(di => di.id == detalleImpresionActualizado.id);
+                    .FirstOrDefault(di => di.ImpresionId == detalleImpresionActualizado.ImpresionId);
 
                 if (detalleImpresionExistente != null)
                 {
-                    // Actualizar impresión existente
-                    detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
-                    detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
-                  
+                    // Si la impresión ya existe, eliminarla si se desea reemplazar
+                    _context.DetalleImpresion.Remove(detalleImpresionExistente);
                 }
-                else
+
+                // Agregar el nuevo detalle de impresión
+                pedidoExistente.DetallesImpresion.Add(new DetalleImpresion
                 {
-                    // Agregar nueva impresión al pedido
-                    pedidoExistente.DetallesImpresion.Add(detalleImpresionActualizado);
-                }
+                    ImpresionId = detalleImpresionActualizado.ImpresionId,
+                    cantidad = detalleImpresionActualizado.cantidad,
+                    precioUnitario = detalleImpresionActualizado.precioUnitario,
+                    
+                });
             }
 
             try
             {
+                // Guardar cambios
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -188,6 +163,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
 
 
