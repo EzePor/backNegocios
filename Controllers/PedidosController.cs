@@ -100,29 +100,73 @@ namespace backNegocio.Controllers
             pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
             pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
 
-            // Actualiza los detalles del producto si es necesario
+            // Actualizar los detalles del producto
+            // Eliminar productos que ya no están en el pedido actualizado
+            var productosExistentesIds = pedidoExistente.DetallesProducto.Select(dp => dp.id).ToList();
+            var productosActualizadosIds = pedidoActualizado.DetallesProducto.Select(dp => dp.id).ToList();
+
+            // Eliminar los detalles que ya no están en la lista actualizada
+            var productosParaEliminar = pedidoExistente.DetallesProducto
+                .Where(dp => !productosActualizadosIds.Contains(dp.id))
+                .ToList();
+
+            foreach (var detalleProductoEliminar in productosParaEliminar)
+            {
+                _context.DetalleProducto.Remove(detalleProductoEliminar);
+            }
+
+            // Actualizar los detalles existentes o agregar nuevos
             foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
             {
                 var detalleProductoExistente = pedidoExistente.DetallesProducto
                     .FirstOrDefault(dp => dp.id == detalleProductoActualizado.id);
+
                 if (detalleProductoExistente != null)
                 {
+                    // Actualizar producto existente
                     detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
                     detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
-                   
+                    
+                }
+                else
+                {
+                    // Agregar nuevo producto al pedido
+                    pedidoExistente.DetallesProducto.Add(detalleProductoActualizado);
                 }
             }
 
-            // Actualiza los detalles de impresión si es necesario
+            // Actualizar los detalles de impresión
+            // Eliminar impresiones que ya no están en el pedido actualizado
+            var impresionesExistentesIds = pedidoExistente.DetallesImpresion.Select(di => di.id).ToList();
+            var impresionesActualizadasIds = pedidoActualizado.DetallesImpresion.Select(di => di.id).ToList();
+
+            // Eliminar los detalles que ya no están en la lista actualizada
+            var impresionesParaEliminar = pedidoExistente.DetallesImpresion
+                .Where(di => !impresionesActualizadasIds.Contains(di.id))
+                .ToList();
+
+            foreach (var detalleImpresionEliminar in impresionesParaEliminar)
+            {
+                _context.DetalleImpresion.Remove(detalleImpresionEliminar);
+            }
+
+            // Actualizar los detalles existentes o agregar nuevos
             foreach (var detalleImpresionActualizado in pedidoActualizado.DetallesImpresion)
             {
                 var detalleImpresionExistente = pedidoExistente.DetallesImpresion
                     .FirstOrDefault(di => di.id == detalleImpresionActualizado.id);
+
                 if (detalleImpresionExistente != null)
                 {
+                    // Actualizar impresión existente
                     detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
                     detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
-                    
+                  
+                }
+                else
+                {
+                    // Agregar nueva impresión al pedido
+                    pedidoExistente.DetallesImpresion.Add(detalleImpresionActualizado);
                 }
             }
 
@@ -144,6 +188,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
 
         // POST: api/Pedidos - Crear Pedido con Detalles
