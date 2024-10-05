@@ -202,18 +202,25 @@ namespace backNegocio.Controllers
         [EnableCors("AllowAll")]
         public async Task<ActionResult<Pedido>> PostPedido(Pedido nuevoPedido)
         {
-            if (nuevoPedido == null || nuevoPedido.ClienteId <= 0 ||
-                nuevoPedido.DetallesProducto == null || !nuevoPedido.DetallesProducto.Any() ||
-                nuevoPedido.DetallesImpresion == null || !nuevoPedido.DetallesImpresion.Any())
+            if (nuevoPedido == null || nuevoPedido.ClienteId <= 0)
             {
                 return BadRequest("El pedido debe contener información válida.");
             }
 
+            // Verificar que el pedido tenga al menos un detalle de producto o un detalle de impresión
+            if ((nuevoPedido.DetallesProducto == null || !nuevoPedido.DetallesProducto.Any()) &&
+                (nuevoPedido.DetallesImpresion == null || !nuevoPedido.DetallesImpresion.Any()))
+            {
+                return BadRequest("El pedido debe contener al menos un producto o una impresión.");
+            }
+
+            // Agregar el pedido a la base de datos
             _context.Pedido.Add(nuevoPedido);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetPedido), new { id = nuevoPedido.id }, nuevoPedido);
         }
+
 
         // DELETE: api/Pedidos/5 - Eliminar Pedido y Detalles Asociados (Soft Delete)
         [HttpDelete("{id}")]
