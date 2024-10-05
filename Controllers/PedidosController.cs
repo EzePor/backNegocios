@@ -84,13 +84,47 @@ namespace backNegocio.Controllers
                 return BadRequest("El ID del pedido no coincide.");
             }
 
-            var pedidoExistente = await _context.Pedido.FindAsync(id);
+            // Obtener el pedido existente junto con sus detalles de productos e impresiones
+            var pedidoExistente = await _context.Pedido
+                .Include(p => p.DetallesProducto)
+                .Include(p => p.DetallesImpresion)
+                .FirstOrDefaultAsync(p => p.id == id);
+
             if (pedidoExistente == null || pedidoExistente.eliminado)
             {
                 return NotFound("Pedido no encontrado o está eliminado.");
             }
 
-            _context.Entry(pedidoActualizado).State = EntityState.Modified;
+            // Actualizar solo las propiedades necesarias
+            pedidoExistente.ModoPagoId = pedidoActualizado.ModoPagoId;
+            pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
+            pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
+
+            // Actualiza los detalles del producto si es necesario
+            foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
+            {
+                var detalleProductoExistente = pedidoExistente.DetallesProducto
+                    .FirstOrDefault(dp => dp.id == detalleProductoActualizado.id);
+                if (detalleProductoExistente != null)
+                {
+                    detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
+                    detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
+                   
+                }
+            }
+
+            // Actualiza los detalles de impresión si es necesario
+            foreach (var detalleImpresionActualizado in pedidoActualizado.DetallesImpresion)
+            {
+                var detalleImpresionExistente = pedidoExistente.DetallesImpresion
+                    .FirstOrDefault(di => di.id == detalleImpresionActualizado.id);
+                if (detalleImpresionExistente != null)
+                {
+                    detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
+                    detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
+                    
+                }
+            }
 
             try
             {
@@ -110,6 +144,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
         // POST: api/Pedidos - Crear Pedido con Detalles
         [HttpPost]
