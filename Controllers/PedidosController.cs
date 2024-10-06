@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using backNegocio.DataContext;
 using backNegocio.Models.Detalles;
 using Microsoft.AspNetCore.Cors;
+using backNegocio.Enums;
 
 namespace backNegocio.Controllers
 {
@@ -58,14 +59,20 @@ namespace backNegocio.Controllers
         [HttpGet("estado/{estado}")]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidosPorEstado(string estado)
         {
+            // Intenta parsear el estado al enum
+            if (!Enum.TryParse<EstadoPedidoEnum>(estado, out var estadoPedido))
+            {
+                return BadRequest("Estado no válido.");
+            }
+
+            // Filtra los pedidos por estado
             var pedidos = await _context.Pedido
-                .Include(p => p.cliente)
-                .Include(p => p.modoPago)
-                .Where(p => p.estadoPedido.ToString() == estado && !p.eliminado)
+                .Where(p => p.estadoPedido == estadoPedido)
                 .ToListAsync();
 
             return Ok(pedidos);
         }
+
 
 
         [HttpGet("cliente/{clienteId}")]
