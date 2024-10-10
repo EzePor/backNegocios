@@ -234,12 +234,46 @@ namespace backNegocio.Controllers
                 return BadRequest("El pedido debe contener al menos un producto o una impresión.");
             }
 
+            // Actualizar el stock de los productos en DetallesProducto
+            foreach (var detalleProducto in nuevoPedido.DetallesProducto)
+            {
+                // Obtener el producto correspondiente desde la base de datos
+                var producto = await _context.Producto.FindAsync(detalleProducto.ProductoId);
+
+                if (producto == null)
+                {
+                    return BadRequest($"El producto con ID {detalleProducto.ProductoId} no existe.");
+                }
+
+                // Verificar si hay suficiente stock para el pedido
+                if (producto.stock < detalleProducto.cantidad)
+                {
+                    return BadRequest($"No hay suficiente stock para el producto {producto.nombre}. Stock disponible: {producto.stock}, cantidad solicitada: {detalleProducto.cantidad}.");
+                }
+
+                // Restar la cantidad pedida del stock
+                producto.stock -= detalleProducto.cantidad;
+
+                // Actualizar el producto en la base de datos
+                _context.Entry(producto).State = EntityState.Modified;
+            }
+
             // Agregar el pedido a la base de datos
             _context.Pedido.Add(nuevoPedido);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                // Guardar los cambios en la base de datos (incluyendo la actualización del stock)
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500, "Ocurrió un problema al actualizar el stock de los productos.");
+            }
 
             return CreatedAtAction(nameof(GetPedido), new { id = nuevoPedido.id }, nuevoPedido);
         }
+
 
 
         // DELETE: api/Pedidos/5 - Eliminar Pedido y Detalles Asociados (Soft Delete)
