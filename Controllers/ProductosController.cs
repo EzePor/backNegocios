@@ -73,6 +73,29 @@ namespace backNegocio.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/reducirStock")]
+        public async Task<IActionResult> ReducirStock(int id, [FromBody] int cantidadRestar)
+        {
+            var producto = await _context.Producto.FindAsync(id);
+
+            if (producto == null)
+            {
+                return NotFound("Producto no encontrado.");
+            }
+
+            if (producto.stock < cantidadRestar)
+            {
+                return BadRequest("Stock insuficiente.");
+            }
+
+            producto.stock -= cantidadRestar;
+            _context.Producto.Update(producto);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
         // POST: api/Productos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
