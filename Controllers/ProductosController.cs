@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backNegocio.DataContext;
 using backNegocio.Models.Commons;
+using backNegocio.Models.Detalles;
 
 namespace backNegocio.Controllers
 {
@@ -94,6 +95,9 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
+       
+
 
 
         // POST: api/Productos

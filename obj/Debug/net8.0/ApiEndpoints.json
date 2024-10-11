@@ -940,6 +940,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backNegocio.Controllers.ProductosController",
+    "Method": "ReducirStock",
+    "RelativePath": "api/Productos/{id}/reducirStock",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "cantidadRestar",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backNegocio.Controllers.ResumenPedidosController",
     "Method": "GetResumenPedido",
     "RelativePath": "api/ResumenPedidos",
