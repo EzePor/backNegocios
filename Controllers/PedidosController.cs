@@ -95,7 +95,7 @@ namespace backNegocio.Controllers
             return Ok(pedidos);
         }
 
-        // PUT: api/Pedidos/5 - Actualizar Pedido
+        
         // PUT: api/Pedidos/5 - Actualizar Pedido
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, Pedido pedidoActualizado)
@@ -214,7 +214,49 @@ namespace backNegocio.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> CrearPedido([FromBody] Pedido nuevoPedido)
+        {
+            try
+            {
+                // Validar el stock antes de guardar el pedido
+                foreach (var detalleProducto in nuevoPedido.DetallesProducto)
+                {
+                    var producto = await _context.Producto.FindAsync(detalleProducto.ProductoId);
+                    if (producto != null)
+                    {
+                        if (producto.stock < detalleProducto.cantidad)
+                        {
+                            return BadRequest(new
+                            {
+                                Message = $"El producto '{producto.nombre}' tiene solo {producto.stock} unidades disponibles.",
+                                StockDisponible = producto.stock,
+                                ProductoId = producto.id
+                            });
+                        }
+                    }
+                }
 
+                // Guardar el pedido si todo está en orden
+                _context.Pedido.Add(nuevoPedido);
+                await _context.SaveChangesAsync();
+
+                // Restar el stock
+                foreach (var detalleProducto in nuevoPedido.DetallesProducto)
+                {
+                    var producto = await _context.Producto.FindAsync(detalleProducto.ProductoId);
+                    producto.stock -= detalleProducto.cantidad;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(nuevoPedido);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            }
+        }
 
 
         // POST: api/Pedidos - Crear Pedido con Detalles
