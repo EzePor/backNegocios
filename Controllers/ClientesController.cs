@@ -79,6 +79,7 @@ namespace backNegocio.Controllers
                 return BadRequest("El ID del cliente no coincide.");
             }
 
+            // Cargar el cliente existente desde la base de datos
             var clienteExistente = await _context.Cliente.FindAsync(id);
 
             if (clienteExistente == null)
@@ -91,7 +92,15 @@ namespace backNegocio.Controllers
                 return BadRequest("No se puede actualizar un cliente eliminado.");
             }
 
-            _context.Entry(cliente).State = EntityState.Modified;
+            // Actualizar solo las propiedades de datos personales del cliente
+            clienteExistente.apellidoNombre = cliente.apellidoNombre;
+            clienteExistente.cuitDni = cliente.cuitDni;
+            clienteExistente.direccion = cliente.direccion;
+            clienteExistente.telefono = cliente.telefono;
+            clienteExistente.email = cliente.email;
+            clienteExistente.Localidad = cliente.Localidad;
+            clienteExistente.CodigoPostal = cliente.CodigoPostal;
+            clienteExistente.Provincia = cliente.Provincia;
 
             try
             {
@@ -111,6 +120,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
         // POST: api/Clientes - Crear cliente
         [HttpPost]

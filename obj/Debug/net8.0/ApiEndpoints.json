@@ -790,22 +790,6 @@
   },
   {
     "ContainingType": "backNegocio.Controllers.PedidosController",
-    "Method": "GetPedidosByClienteId",
-    "RelativePath": "api/Pedidos/cliente/{clienteId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "clienteId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "backNegocio.Controllers.PedidosController",
     "Method": "GetPedidosPorEstado",
     "RelativePath": "api/Pedidos/estado/{estado}",
     "HttpMethod": "GET",
