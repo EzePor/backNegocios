@@ -95,7 +95,7 @@ namespace backNegocio.Controllers
             return Ok(pedidos);
         }
 
-        
+
         // PUT: api/Pedidos/5 - Actualizar Pedido
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, Pedido pedidoActualizado)
@@ -116,86 +116,85 @@ namespace backNegocio.Controllers
                 return NotFound("Pedido no encontrado o está eliminado.");
             }
 
-            // Actualizar propiedades básicas del pedido
-            pedidoExistente.ModoPagoId = pedidoActualizado.ModoPagoId;
-            pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
-            pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
-
-            // *** Manejo de productos eliminados ***
-            // Filtrar los productos que no están en el pedido actualizado
-            var productosEliminados = pedidoExistente.DetallesProducto
-                .Where(dp => !pedidoActualizado.DetallesProducto.Any(dpa => dpa.ProductoId == dp.ProductoId))
-                .ToList();
-
-            // Eliminar los productos eliminados
-            foreach (var productoEliminado in productosEliminados)
+            // Verificar si solo se está actualizando estadoPedido o FuePagado
+            if (pedidoActualizado.DetallesProducto == null && pedidoActualizado.DetallesImpresion == null)
             {
-                _context.DetalleProducto.Remove(productoEliminado);
+                // Actualizar solo el estado o FuePagado
+                pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
+                pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
             }
-
-            // Manejo de DetallesProducto
-            foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
+            else
             {
-                var detalleProductoExistente = pedidoExistente.DetallesProducto
-                    .FirstOrDefault(dp => dp.ProductoId == detalleProductoActualizado.ProductoId);
+                // Actualizar propiedades básicas del pedido
+                pedidoExistente.ModoPagoId = pedidoActualizado.ModoPagoId;
+                pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
+                pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
 
-                if (detalleProductoExistente != null)
+                // *** Manejo de productos eliminados ***
+                var productosEliminados = pedidoExistente.DetallesProducto
+                    .Where(dp => !pedidoActualizado.DetallesProducto.Any(dpa => dpa.ProductoId == dp.ProductoId))
+                    .ToList();
+
+                foreach (var productoEliminado in productosEliminados)
                 {
-                    // Si el producto ya existe, actualiza su cantidad y precio
-                    detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
-                    detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
+                    _context.DetalleProducto.Remove(productoEliminado);
                 }
-                else
+
+                foreach (var detalleProductoActualizado in pedidoActualizado.DetallesProducto)
                 {
-                    // Si no existe, agregarlo como nuevo
-                    pedidoExistente.DetallesProducto.Add(new DetalleProducto
+                    var detalleProductoExistente = pedidoExistente.DetallesProducto
+                        .FirstOrDefault(dp => dp.ProductoId == detalleProductoActualizado.ProductoId);
+
+                    if (detalleProductoExistente != null)
                     {
-                        ProductoId = detalleProductoActualizado.ProductoId,
-                        cantidad = detalleProductoActualizado.cantidad,
-                        precioUnitario = detalleProductoActualizado.precioUnitario
-                    });
-                }
-            }
-
-            // *** Manejo de impresiones eliminadas ***
-            // Filtrar las impresiones que no están en el pedido actualizado
-            var impresionesEliminadas = pedidoExistente.DetallesImpresion
-                .Where(di => !pedidoActualizado.DetallesImpresion.Any(dia => dia.ImpresionId == di.ImpresionId))
-                .ToList();
-
-            // Eliminar las impresiones eliminadas
-            foreach (var impresionEliminada in impresionesEliminadas)
-            {
-                _context.DetalleImpresion.Remove(impresionEliminada);
-            }
-
-            // Manejo de DetallesImpresion
-            foreach (var detalleImpresionActualizado in pedidoActualizado.DetallesImpresion)
-            {
-                var detalleImpresionExistente = pedidoExistente.DetallesImpresion
-                    .FirstOrDefault(di => di.ImpresionId == detalleImpresionActualizado.ImpresionId);
-
-                if (detalleImpresionExistente != null)
-                {
-                    // Si la impresión ya existe, actualizar su cantidad y precio
-                    detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
-                    detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
-                }
-                else
-                {
-                    // Si no existe, agregarlo como nuevo
-                    pedidoExistente.DetallesImpresion.Add(new DetalleImpresion
+                        detalleProductoExistente.cantidad = detalleProductoActualizado.cantidad;
+                        detalleProductoExistente.precioUnitario = detalleProductoActualizado.precioUnitario;
+                    }
+                    else
                     {
-                        ImpresionId = detalleImpresionActualizado.ImpresionId,
-                        cantidad = detalleImpresionActualizado.cantidad,
-                        precioUnitario = detalleImpresionActualizado.precioUnitario
-                    });
+                        pedidoExistente.DetallesProducto.Add(new DetalleProducto
+                        {
+                            ProductoId = detalleProductoActualizado.ProductoId,
+                            cantidad = detalleProductoActualizado.cantidad,
+                            precioUnitario = detalleProductoActualizado.precioUnitario
+                        });
+                    }
+                }
+
+                // *** Manejo de impresiones eliminadas ***
+                var impresionesEliminadas = pedidoExistente.DetallesImpresion
+                    .Where(di => !pedidoActualizado.DetallesImpresion.Any(dia => dia.ImpresionId == di.ImpresionId))
+                    .ToList();
+
+                foreach (var impresionEliminada in impresionesEliminadas)
+                {
+                    _context.DetalleImpresion.Remove(impresionEliminada);
+                }
+
+                foreach (var detalleImpresionActualizado in pedidoActualizado.DetallesImpresion)
+                {
+                    var detalleImpresionExistente = pedidoExistente.DetallesImpresion
+                        .FirstOrDefault(di => di.ImpresionId == detalleImpresionActualizado.ImpresionId);
+
+                    if (detalleImpresionExistente != null)
+                    {
+                        detalleImpresionExistente.cantidad = detalleImpresionActualizado.cantidad;
+                        detalleImpresionExistente.precioUnitario = detalleImpresionActualizado.precioUnitario;
+                    }
+                    else
+                    {
+                        pedidoExistente.DetallesImpresion.Add(new DetalleImpresion
+                        {
+                            ImpresionId = detalleImpresionActualizado.ImpresionId,
+                            cantidad = detalleImpresionActualizado.cantidad,
+                            precioUnitario = detalleImpresionActualizado.precioUnitario
+                        });
+                    }
                 }
             }
 
             try
             {
-                // Guardar cambios
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -212,6 +211,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
 
         // POST: api/Pedidos - Crear Pedido con Detalles
