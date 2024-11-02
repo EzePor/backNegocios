@@ -115,10 +115,8 @@ namespace backNegocio.Controllers
                 return NotFound("Pedido no encontrado o está eliminado.");
             }
 
-            // Verificar si solo se están actualizando `estadoPedido` y `FuePagado`
-            var actualizacionParcial = pedidoActualizado.DetallesProducto == null && pedidoActualizado.DetallesImpresion == null;
-
-            if (actualizacionParcial)
+            // Verificar si solo se está actualizando estadoPedido o FuePagado
+            if (pedidoActualizado.DetallesProducto == null && pedidoActualizado.DetallesImpresion == null)
             {
                 // Solo actualizar `estadoPedido` y `FuePagado`
                 pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
