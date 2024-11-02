@@ -96,7 +96,6 @@ namespace backNegocio.Controllers
         }
 
 
-        // PUT: api/Pedidos/5 - Actualizar Pedido
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, Pedido pedidoActualizado)
         {
@@ -105,7 +104,7 @@ namespace backNegocio.Controllers
                 return BadRequest("El ID del pedido no coincide.");
             }
 
-            // Obtener el pedido existente junto con sus detalles
+            // Obtener el pedido existente con sus detalles
             var pedidoExistente = await _context.Pedido
                 .Include(p => p.DetallesProducto)
                 .Include(p => p.DetallesImpresion)
@@ -116,10 +115,12 @@ namespace backNegocio.Controllers
                 return NotFound("Pedido no encontrado o está eliminado.");
             }
 
-            // Verificar si solo se está actualizando estadoPedido o FuePagado
-            if (pedidoActualizado.DetallesProducto == null && pedidoActualizado.DetallesImpresion == null)
+            // Verificar si solo se están actualizando `estadoPedido` y `FuePagado`
+            var actualizacionParcial = pedidoActualizado.DetallesProducto == null && pedidoActualizado.DetallesImpresion == null;
+
+            if (actualizacionParcial)
             {
-                // Actualizar solo el estado o FuePagado
+                // Solo actualizar `estadoPedido` y `FuePagado`
                 pedidoExistente.estadoPedido = pedidoActualizado.estadoPedido;
                 pedidoExistente.FuePagado = pedidoActualizado.FuePagado;
             }
@@ -211,6 +212,7 @@ namespace backNegocio.Controllers
 
             return NoContent();
         }
+
 
 
 
